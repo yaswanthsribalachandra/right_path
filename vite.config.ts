@@ -23,7 +23,7 @@ export default defineConfig(async ({ mode }) => {
       if (vercelConfig.env) {
         for (const [key, value] of Object.entries(vercelConfig.env)) {
           if (!env[key]) {
-            env[key] = value;
+            env[key] = String(value);
           }
         }
       }

@@ -1,3 +1,15 @@
+// Polyfill Promise.withResolvers for Safari < 17.4 compatibility
+if (typeof (Promise as any).withResolvers === 'undefined') {
+  (Promise as any).withResolvers = function () {
+    let resolve: any, reject: any;
+    const promise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  };
+}
+
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Use UNPKG CDN matching package.json version of pdfjs-dist to load the worker reliably in Vite

@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Save, Loader2, Star, MessageSquareText } from 'lucide-react';
+import { Save, Loader2, Star, MessageSquareText, Sun, Moon } from 'lucide-react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../components/ui/Toast';
@@ -16,6 +16,19 @@ export default function SettingsPage() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [feedbackSent, setFeedbackSent] = useState(false);
+
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(
+    (localStorage.getItem('theme') as 'light' | 'dark') || 'dark'
+  );
+
+  useEffect(() => {
+    localStorage.setItem('theme', themeMode);
+    if (themeMode === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  }, [themeMode]);
 
   useEffect(() => {
     if (!profile) return;
@@ -67,6 +80,44 @@ export default function SettingsPage() {
     <DashboardLayout>
       <p className="font-mono text-xs uppercase tracking-widest text-faint mb-2">Account</p>
       <h1 className="font-display text-3xl text-text mb-8">Settings</h1>
+
+      {/* Appearance Theme Card */}
+      <div className="glass rounded-2xl p-7 mb-6 max-w-2xl">
+        <h2 className="font-display text-lg text-text mb-1 flex items-center gap-2">
+          Appearance
+        </h2>
+        <p className="text-sm text-muted mb-5">Choose your preferred visual theme for the application.</p>
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() => setThemeMode('dark')}
+            className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+              themeMode === 'dark' ? 'border-emerald bg-emerald/5 text-emerald' : 'border-border text-muted hover:text-text hover:bg-white/5'
+            }`}
+            style={themeMode === 'dark' ? { borderColor: 'var(--color-emerald)' } : {}}
+          >
+            <Moon className="h-5 w-5" />
+            <div className="text-left">
+              <p className="text-sm font-semibold">Dark Theme</p>
+              <p className="text-xs opacity-75">Sleek, low-light workspace</p>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setThemeMode('light')}
+            className={`flex-1 flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+              themeMode === 'light' ? 'border-emerald bg-emerald/5 text-emerald' : 'border-border text-muted hover:text-text hover:bg-white/5'
+            }`}
+            style={themeMode === 'light' ? { borderColor: 'var(--color-emerald)' } : {}}
+          >
+            <Sun className="h-5 w-5" />
+            <div className="text-left">
+              <p className="text-sm font-semibold">Light Theme</p>
+              <p className="text-xs opacity-75">Clean, bright visualization</p>
+            </div>
+          </button>
+        </div>
+      </div>
 
       <form onSubmit={handleSave} className="glass rounded-2xl p-7 mb-6 max-w-2xl space-y-5">
         <h2 className="font-display text-lg text-text mb-1">Profile Information</h2>

@@ -1,17 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,400..700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-@theme {
-  --font-display: "Fraunces", serif;
-  --font-body: "Manrope", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-
+:root {
   --color-ink: #060a12;
   --color-surface: #0b1120;
   --color-surface-2: #11182b;
   --color-surface-3: #171f36;
   --color-border: #253150;
   --color-line: #1b2440;
+  --color-text: #e7ecf7;
+  --color-muted: #8b96b5;
+  --color-faint: #565f7d;
+
+  --glass-bg-start: rgba(23, 31, 54, 0.7);
+  --glass-bg-end: rgba(11, 17, 32, 0.55);
+  --glass-strong-start: rgba(23, 31, 54, 0.9);
+  --glass-strong-end: rgba(11, 17, 32, 0.85);
+  --mesh-bg-opacity-1: 0.18;
+  --mesh-bg-opacity-2: 0.12;
+  --mesh-bg-opacity-3: 0.08;
+  --grid-line-color: rgba(255, 255, 255, 0.035);
+}
+
+.light {
+  --color-ink: #f2f4f8;
+  --color-surface: #ffffff;
+  --color-surface-2: #e8ebf0;
+  --color-surface-3: #dce1eb;
+  --color-border: #cbd3e2;
+  --color-line: #b9c4d9;
+  --color-text: #111622;
+  --color-muted: #4e5a77;
+  --color-faint: #7885a0;
+
+  --glass-bg-start: rgba(255, 255, 255, 0.85);
+  --glass-bg-end: rgba(240, 242, 245, 0.75);
+  --glass-strong-start: rgba(255, 255, 255, 0.95);
+  --glass-strong-end: rgba(240, 242, 245, 0.9);
+  --mesh-bg-opacity-1: 0.05;
+  --mesh-bg-opacity-2: 0.03;
+  --mesh-bg-opacity-3: 0.02;
+  --grid-line-color: rgba(0, 0, 0, 0.03);
+}
+
+@theme {
+  --font-display: "Fraunces", serif;
+  --font-body: "Manrope", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-ink: var(--color-ink);
+  --color-surface: var(--color-surface);
+  --color-surface-2: var(--color-surface-2);
+  --color-surface-3: var(--color-surface-3);
+  --color-border: var(--color-border);
+  --color-line: var(--color-line);
 
   --color-emerald: #34d8a8;
   --color-emerald-soft: #9beecd;
@@ -20,9 +62,9 @@
   --color-rose: #ff6f8f;
   --color-ice: #dce6ff;
 
-  --color-text: #e7ecf7;
-  --color-muted: #8b96b5;
-  --color-faint: #565f7d;
+  --color-text: var(--color-text);
+  --color-muted: var(--color-muted);
+  --color-faint: var(--color-faint);
 }
 
 html {
@@ -34,6 +76,7 @@ body {
   color: var(--color-text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 ::selection {
@@ -64,29 +107,32 @@ body {
 }
 
 .glass {
-  background: linear-gradient(180deg, rgba(23, 31, 54, 0.7), rgba(11, 17, 32, 0.55));
+  background: linear-gradient(180deg, var(--glass-bg-start), var(--glass-bg-end));
   border: 1px solid var(--color-border);
   backdrop-filter: blur(18px);
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .glass-strong {
-  background: linear-gradient(180deg, rgba(23, 31, 54, 0.9), rgba(11, 17, 32, 0.85));
+  background: linear-gradient(180deg, var(--glass-strong-start), var(--glass-strong-end));
   border: 1px solid var(--color-border);
   backdrop-filter: blur(24px);
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .mesh-bg {
   background-color: var(--color-ink);
   background-image:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(52, 216, 168, 0.18), transparent),
-    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(245, 181, 85, 0.12), transparent),
-    radial-gradient(ellipse 60% 60% at 50% 100%, rgba(255, 111, 143, 0.08), transparent);
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(52, 216, 168, var(--mesh-bg-opacity-1)), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(245, 181, 85, var(--mesh-bg-opacity-2)), transparent),
+    radial-gradient(ellipse 60% 60% at 50% 100%, rgba(255, 111, 143, var(--mesh-bg-opacity-3)), transparent);
+  transition: background-color 0.25s ease;
 }
 
 .grid-overlay {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    linear-gradient(var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px);
   background-size: 42px 42px;
 }
 

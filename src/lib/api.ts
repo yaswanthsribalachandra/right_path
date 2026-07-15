@@ -78,8 +78,12 @@ export const submitMockInterview = (payload: { user_id: string; role: string; qu
 
 // ---- Chat ----
 export const getChatHistory = (userId: string) => jsonFetch<ChatMessage[]>(`/api/chat?user_id=${userId}`);
-export const sendChatMessage = (payload: { user_id: string; message: string }) =>
-  jsonFetch<ChatMessage>('/api/chat', { method: 'POST', body: JSON.stringify(payload) });
+export const sendChatMessage = (payload: { user_id: string; message: string }, geminiKey?: string) =>
+  jsonFetch<ChatMessage>('/api/chat', { 
+    method: 'POST', 
+    body: JSON.stringify(payload),
+    headers: geminiKey ? { 'x-gemini-key': geminiKey } : {}
+  });
 
 // ---- Saved Careers ----
 export const getSavedCareers = (userId: string) => jsonFetch<SavedCareer[]>(`/api/saved-careers?user_id=${userId}`);

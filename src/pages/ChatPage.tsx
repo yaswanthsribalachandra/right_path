@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Send, Loader2, BookMarked, Bot, User as UserIcon } from 'lucide-react';
+import { Sparkles, Send, Loader2, BookMarked, Bot, User as UserIcon, Settings } from 'lucide-react';
 import DashboardLayout from '../components/DashboardLayout';
 import Loader from '../components/ui/Loader';
 import { useAuth } from '../contexts/AuthContext';
@@ -66,6 +66,9 @@ export default function ChatPage() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [geminiKey, setGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [showSettings, setShowSettings] = useState(false);
+  const [keyInput, setKeyInput] = useState(geminiKey);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,7 +88,7 @@ export default function ChatPage() {
     const optimisticUser: ChatMessage = { id: `temp-${Date.now()}`, user_id: user.id, role: 'user', message: content, sources: [], created_at: new Date().toISOString() };
     setMessages((m) => [...m, optimisticUser]);
     try {
-      const assistantMsg = await sendChatMessage({ user_id: user.id, message: content });
+      const assistantMsg = await sendChatMessage({ user_id: user.id, message: content }, geminiKey);
       setMessages((m) => [...m, assistantMsg]);
     } catch {
       setMessages((m) => [...m, { id: `err-${Date.now()}`, user_id: user.id, role: 'assistant', message: 'Sorry, I ran into an error retrieving that information. Please try again.', sources: [], created_at: new Date().toISOString() }]);
@@ -104,7 +107,59 @@ export default function ChatPage() {
   return (
     <DashboardLayout>
       <p className="font-mono text-xs uppercase tracking-widest text-faint mb-2">AI Career Coach</p>
-      <h1 className="font-display text-3xl text-text mb-6">Personalized AI Chat</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="font-display text-3xl text-text">Personalized AI Chat</h1>
+        <button 
+          onClick={() => setShowSettings(!showSettings)} 
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg glass text-xs text-muted hover:bg-white/5 transition-colors"
+        >
+          <Settings className="h-4 w-4" />
+          <span>{geminiKey ? 'Gemini Key Configured' : 'Configure Gemini Key'}</span>
+        </button>
+      </div>
+
+      {showSettings && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="glass p-5 rounded-2xl mb-6 space-y-3 max-w-lg">
+          <h3 className="text-sm font-semibold text-text">Gemini API Configuration</h3>
+          <p className="text-xs text-muted leading-relaxed">
+            Configure your own Google Gemini API key to experience personalized interactive chats based on your resume and real-time knowledge base. The key is securely stored in your browser's local storage and never exposed.
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="password"
+              placeholder="Paste your Gemini API key (AIzaSy...)"
+              value={keyInput}
+              onChange={(e) => setKeyInput(e.target.value)}
+              className="flex-1 bg-white/5 border rounded-lg px-3 py-2 text-xs text-text outline-none focus:border-emerald transition-colors"
+              style={{ borderColor: 'var(--color-border)' }}
+            />
+            <button
+              onClick={() => {
+                localStorage.setItem('gemini_api_key', keyInput.trim());
+                setGeminiKey(keyInput.trim());
+                setShowSettings(false);
+              }}
+              className="px-4 py-2 rounded-lg text-xs font-semibold text-ink"
+              style={{ background: 'var(--color-emerald)' }}
+            >
+              Save
+            </button>
+            {geminiKey && (
+              <button
+                onClick={() => {
+                  localStorage.removeItem('gemini_api_key');
+                  setGeminiKey('');
+                  setKeyInput('');
+                  setShowSettings(false);
+                }}
+                className="px-3 py-2 rounded-lg text-xs font-semibold bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </motion.div>
+      )}
 
       <div className="glass-strong rounded-2xl flex flex-col h-[calc(100vh-260px)] min-h-[500px]">
         <div ref={scrollRef} className="flex-1 overflow-y-auto no-scrollbar px-5 sm:px-7 py-6 space-y-5">

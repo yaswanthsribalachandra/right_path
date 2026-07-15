@@ -123,7 +123,7 @@ async function callGemini(prompt, apiKey) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-gemini-key');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
   try {
@@ -157,7 +157,7 @@ export default async function handler(req, res) {
       let reply = '';
       let sources = [];
 
-      const geminiApiKey = process.env.GEMINI_API_KEY;
+      const geminiApiKey = req.headers['x-gemini-key'] || process.env.GEMINI_API_KEY;
       if (geminiApiKey) {
         try {
           const defaultRes = generateReply(intent, message, kb, userSkills);
